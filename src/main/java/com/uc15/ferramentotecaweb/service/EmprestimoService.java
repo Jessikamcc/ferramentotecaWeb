@@ -1,14 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 package com.uc15.ferramentotecaweb.service;
 
-/**
- *
- * @author USER
- */
+import com.uc15.ferramentotecaweb.model.Emprestimo;
+import com.uc15.ferramentotecaweb.repository.EmprestimoRepository;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+
+@Service
 public class EmprestimoService {
 
+    private final EmprestimoRepository emprestimoRepository;
+
+    public EmprestimoService(EmprestimoRepository emprestimoRepository) {
+        this.emprestimoRepository = emprestimoRepository;
+    }
+
+    public List<Emprestimo> listarTodos() {
+        return emprestimoRepository.findAll();
+    }
+
+    public Optional<Emprestimo> buscarPorId(Long id) {
+        return emprestimoRepository.findById(id);
+    }
+
+    public Emprestimo salvar(Emprestimo emprestimo) {
+        return emprestimoRepository.save(emprestimo);
+    }
+
+    public void excluir(Long id) {
+        emprestimoRepository.deleteById(id);
+    }
 }
