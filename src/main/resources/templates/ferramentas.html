@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastro de Ferramentas</title>
+
+    <!-- Ícones Bootstrap -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS da página -->
+    <link rel="stylesheet" href="/css/ferramentas.css">
+</head>
+
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+        <h1>Cadastro de Ferramentas</h1>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="conteudo-principal">
+
+        <form id="formFerramenta" class="formulario-ferramenta">
+
+            <div class="formulario-grid">
+
+                <!-- Coluna esquerda -->
+                <section class="coluna-esquerda">
+
+                    <!-- Pesquisa -->
+                    <div class="grupo-campo">
+                        <label for="buscaFerramenta">
+                            ID ou Nome:
+                        </label>
+
+                        <div class="linha-pesquisa">
+                            <input
+                                type="text"
+                                id="buscaFerramenta"
+                                name="buscaFerramenta"
+                                placeholder="Digite o ID ou nome"
+                            >
+
+                            <button
+                                type="button"
+                                id="btnBuscar"
+                                class="btn btn-buscar"
+                            >
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nome -->
+                    <div class="grupo-campo">
+                        <label for="nome">
+                            Nome:<span class="obrigatorio">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Digite o nome da ferramenta"
+                            required
+                        >
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="grupo-campo">
+                        <label for="descricao">
+                            Descrição:
+                        </label>
+
+                        <textarea
+                            id="descricao"
+                            name="descricao"
+                            placeholder="Marca, modelo, categoria, etc."
+                            rows="4"
+                        ></textarea>
+                    </div>
+
+                    <!-- Localização -->
+                    <div class="grupo-campo">
+                        <label for="localizacao">
+                            Localização:<span class="obrigatorio">*</span>
+                        </label>
+
+                        <select
+                            id="localizacao"
+                            name="localizacao"
+                            required
+                        >
+                            <option value="" selected disabled>
+                                Selecione a localização
+                            </option>
+
+                            <option value="almoxarifado">
+                                Almoxarifado
+                            </option>
+
+                            <option value="oficina">
+                                Oficina
+                            </option>
+
+                            <option value="deposito">
+                                Depósito
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <fieldset class="grupo-status">
+
+                        <legend>
+                            Status:<span class="obrigatorio">*</span>
+                        </legend>
+
+                        <div class="opcoes-status">
+
+                            <label class="opcao-status" for="disponivel">
+                                <input
+                                    type="radio"
+                                    id="disponivel"
+                                    name="status"
+                                    value="disponivel"
+                                    checked
+                                >
+
+                                <span>Disponível</span>
+                            </label>
+
+                            <label class="opcao-status" for="desativada">
+                                <input
+                                    type="radio"
+                                    id="desativada"
+                                    name="status"
+                                    value="desativada"
+                                >
+
+                                <span>Desativar</span>
+                            </label>
+
+                        </div>
+                    </fieldset>
+
+                    <!-- Motivo da desativação -->
+                    <div class="grupo-campo">
+                        <label for="motivoDesativacao">
+                            Motivo da desativação:
+                        </label>
+
+                        <input
+                            type="text"
+                            id="motivoDesativacao"
+                            name="motivoDesativacao"
+                            placeholder="Informe o motivo da desativação"
+                            disabled
+                        >
+                    </div>
+
+                </section>
+
+                <!-- Coluna direita -->
+                <section class="coluna-direita">
+
+                    <label class="titulo-imagem" for="imagemFerramenta">
+                        Imagem ilustrativa:
+                    </label>
+
+                    <input
+                        type="file"
+                        id="imagemFerramenta"
+                        name="imagemFerramenta"
+                        accept=".jpg,.jpeg,.png"
+                        hidden
+                    >
+
+                    <label
+                        for="imagemFerramenta"
+                        class="area-upload"
+                    >
+                        <i
+                            class="bi bi-image"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span class="upload-titulo">
+                            Clique para adicionar
+                        </span>
+
+                        <span class="upload-subtitulo">
+                            ou arraste uma imagem
+                        </span>
+
+                        <span class="upload-formatos">
+                            JPG ou PNG · Máximo 2 MB
+                        </span>
+                    </label>
+
+                </section>
+
+            </div>
+
+            <!-- Botões -->
+            <div class="acoes-formulario">
+
+                <button
+                    type="submit"
+                    class="btn btn-cadastrar"
+                >
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    <span>Cadastrar</span>
+                </button>
+
+                <button
+                    type="button"
+                    id="btnAtualizar"
+                    class="btn btn-atualizar"
+                >
+                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                    <span>Atualizar</span>
+                </button>
+
+                <button
+                    type="reset"
+                    class="btn btn-limpar"
+                >
+                    <i class="bi bi-eraser" aria-hidden="true"></i>
+                    <span>Limpar</span>
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+    <!-- JavaScript da página -->
+    <script src="/js/ferramentas.js"></script>
+
+</body>
+
+</html>

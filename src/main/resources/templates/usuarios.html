@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastro de Usuário</title>
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS da página -->
+    <link rel="stylesheet" href="/css/usuarios.css">
+</head>
+
+<body>
+
+    <main class="pagina-usuario">
+
+        <!-- Cabeçalho da página -->
+        <header class="cabecalho-usuario">
+            <h1>CADASTRO DE USUÁRIO</h1>
+        </header>
+
+
+        <!-- Área principal -->
+        <section class="conteudo-usuario">
+
+            <!-- Pesquisa de usuário -->
+            <div class="area-pesquisa">
+
+                <label for="buscarUsuario">Nome</label>
+
+                <div class="campo-pesquisa">
+
+                    <input
+                        type="search"
+                        id="buscarUsuario"
+                        placeholder="Buscar por nome"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        id="btnBuscar"
+                        class="btn-pesquisar"
+                        aria-label="Buscar usuário"
+                        title="Buscar usuário"
+                    >
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </div>
+
+                <!-- Resultados encontrados pelo JavaScript -->
+                <div
+                    id="resultadoBusca"
+                    class="resultado-busca"
+                ></div>
+
+            </div>
+
+
+            <!-- Formulário -->
+            <form id="formUsuario" class="formulario-usuario">
+
+                <!-- ID do usuário selecionado -->
+                <input type="hidden" id="usuarioId">
+
+
+                <!-- Nome -->
+                <div class="grupo-campo">
+
+                    <label for="nome">
+                        Nome:
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="Digite o nome completo"
+                        autocomplete="name"
+                        required
+                    >
+
+                    <small
+                        id="erroNome"
+                        class="mensagem-erro"
+                    ></small>
+
+                </div>
+
+
+                <!-- Senha -->
+                <div class="grupo-campo">
+
+                    <label for="senha">
+                        Senha:
+                    </label>
+
+                    <div class="campo-com-icone">
+
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="Digite a senha"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="btn-mostrar-senha"
+                            data-campo="senha"
+                            aria-label="Mostrar senha"
+                            title="Mostrar senha"
+                        >
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+
+                    </div>
+
+                    <small
+                        id="erroSenha"
+                        class="mensagem-erro"
+                    ></small>
+
+                </div>
+
+
+                <!-- Confirmar senha -->
+                <div class="grupo-campo">
+
+                    <label for="confirmarSenha">
+                        Confirmar Senha:
+                    </label>
+
+                    <div class="campo-com-icone">
+
+                        <input
+                            type="password"
+                            id="confirmarSenha"
+                            name="confirmarSenha"
+                            placeholder="Confirme a senha"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="btn-mostrar-senha"
+                            data-campo="confirmarSenha"
+                            aria-label="Mostrar confirmação da senha"
+                            title="Mostrar senha"
+                        >
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+
+                    </div>
+
+                    <small
+                        id="erroConfirmarSenha"
+                        class="mensagem-erro"
+                    ></small>
+
+                </div>
+
+
+                <!-- Tipo de usuário -->
+                <div class="grupo-campo">
+
+                    <label for="tipoUsuario">
+                        Tipo de Usuário:
+                    </label>
+
+                    <select
+                        id="tipoUsuario"
+                        name="tipoUsuario"
+                        required
+                    >
+                        <option value="" selected disabled>
+                            Selecione o tipo de usuário
+                        </option>
+
+                        <option value="administrador">
+                            Administrador
+                        </option>
+
+                        <option value="funcionario">
+                            Funcionário
+                        </option>
+                    </select>
+
+                    <small
+                        id="erroTipoUsuario"
+                        class="mensagem-erro"
+                    ></small>
+
+                </div>
+
+
+                <!-- Botões -->
+                <div class="area-botoes">
+
+                    <button
+                        type="submit"
+                        id="btnCadastrar"
+                        class="btn btn-cadastrar"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Cadastrar</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="btnAtualizar"
+                        class="btn btn-atualizar"
+                        disabled
+                    >
+                        <i class="bi bi-pencil"></i>
+                        <span>Atualizar</span>
+                    </button>
+
+
+                    <button
+                        type="reset"
+                        id="btnLimpar"
+                        class="btn btn-limpar"
+                    >
+                        <i class="bi bi-eraser"></i>
+                        <span>Limpar</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="btnExcluir"
+                        class="btn btn-excluir"
+                        disabled
+                    >
+                        <i class="bi bi-trash3"></i>
+                        <span>Excluir</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- JavaScript da página -->
+    <script src="/js/usuarios.js"></script>
+
+</body>
+
+</html>

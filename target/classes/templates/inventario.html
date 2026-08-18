@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Inventário | Ferramentoteca</title>
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- CSS da tela -->
+    <link rel="stylesheet" href="/css/inventario.css">
+</head>
+
+<body>
+
+    <main class="pagina-inventario">
+
+        <!-- Cabeçalho -->
+        <header class="cabecalho-inventario">
+            <h1>INVENTÁRIO</h1>
+        </header>
+
+        <section class="conteudo-inventario">
+
+            <!-- Filtros -->
+            <form class="area-filtros" id="formFiltros">
+
+                <!-- Nome -->
+                <div class="grupo-filtro filtro-nome">
+                    <label for="nome">Nome</label>
+
+                    <div class="campo-com-icone">
+                        <input
+                            type="search"
+                            id="nome"
+                            name="nome"
+                            placeholder="Buscar por nome"
+                            autocomplete="off"
+                        >
+
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="grupo-filtro">
+                    <label for="status">Status</label>
+
+                    <select id="status" name="status">
+                        <option value="">Todos</option>
+                        <option value="disponivel">Disponível</option>
+                        <option value="emprestada">Emprestada</option>
+                        <option value="desativada">Desativada</option>
+                    </select>
+                </div>
+
+                <!-- Localização -->
+                <div class="grupo-filtro">
+                    <label for="localizacao">Localização</label>
+
+                    <select id="localizacao" name="localizacao">
+                        <option value="">Todas</option>
+                        <option value="almoxarifado">Almoxarifado</option>
+                        <option value="oficina-2">Oficina 2</option>
+                    </select>
+                </div>
+
+                <!-- Botão Buscar -->
+                <button class="botao-buscar" type="submit">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <span>Buscar</span>
+                </button>
+
+            </form>
+
+            <!-- Texto de orientação -->
+            <p class="texto-orientacao" id="ajudaFiltros">
+                Preencha um ou mais filtros para buscar.
+                Todos os filtros são opcionais.
+            </p>
+
+            <!-- Tabela -->
+            <div class="area-tabela">
+
+                <table class="tabela-inventario">
+
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Localização</th>
+                            <th scope="col">Data de Devolução</th>
+                            <th scope="col">Responsável</th>
+                            <th scope="col">Motivo da Desativação</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- Furadeira -->
+                        <tr>
+                            <td>1</td>
+                            <td>Furadeira</td>
+
+                            <td>
+                                <span class="status status-disponivel">
+                                    Disponível
+                                </span>
+                            </td>
+
+                            <td>Almoxarifado</td>
+                            <td>15/06/2026</td>
+                            <td>João Silva</td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>
+                                <div class="acoes">
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Visualizar Furadeira"
+                                        aria-label="Visualizar Furadeira"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Editar Furadeira"
+                                        aria-label="Editar Furadeira"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Martelo -->
+                        <tr>
+                            <td>2</td>
+                            <td>Martelo</td>
+
+                            <td>
+                                <span class="status status-emprestada">
+                                    Emprestada
+                                </span>
+                            </td>
+
+                            <td>Oficina 2</td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>
+                                <div class="acoes">
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Visualizar Martelo"
+                                        aria-label="Visualizar Martelo"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Editar Martelo"
+                                        aria-label="Editar Martelo"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Chave -->
+                        <tr>
+                            <td>3</td>
+                            <td>Chave</td>
+
+                            <td>
+                                <span class="status status-desativada">
+                                    Desativada
+                                </span>
+                            </td>
+
+                            <td>Almoxarifado</td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>
+                                <span class="sem-dado">--------</span>
+                            </td>
+
+                            <td>Dano irreparável</td>
+
+                            <td>
+                                <div class="acoes">
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Visualizar Chave"
+                                        aria-label="Visualizar Chave"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    <button
+                                        class="botao-acao"
+                                        type="button"
+                                        title="Editar Chave"
+                                        aria-label="Editar Chave"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- Limpar filtros -->
+            <button
+                class="botao-limpar"
+                id="botaoLimpar"
+                type="button"
+            >
+                <i class="bi bi-funnel-fill" aria-hidden="true"></i>
+                <span>Limpar filtros</span>
+            </button>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript da tela -->
+    <script src="/js/inventario.js"></script>
+
+</body>
+
+</html>

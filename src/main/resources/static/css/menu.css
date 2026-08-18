@@ -1,0 +1,585 @@
+/*==============================
+RESET
+==============================*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #EEF2F7;
+    overflow-x: hidden;
+}
+
+/*==============================
+LAYOUT PRINCIPAL
+==============================*/
+
+.container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/*==============================
+SIDEBAR
+==============================*/
+
+.sidebar {
+    width: clamp(220px, 18vw, 280px);
+    min-height: 100vh;
+
+    background: #163B82;
+    color: #FFFFFF;
+
+    display: flex;
+    flex-direction: column;
+
+    padding:
+        clamp(24px, 3vw, 35px) clamp(18px, 2vw, 25px);
+
+    flex-shrink: 0;
+}
+
+/*==============================
+LOGO
+==============================*/
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: clamp(45px, 7vh, 70px);
+}
+
+.logo-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.gear {
+    width: clamp(40px, 3.2vw, 48px);
+}
+
+.wrench {
+    width: clamp(28px, 2.2vw, 34px);
+}
+
+.logo h2 {
+    color: #FFFFFF;
+
+    font-size: clamp(15px, 1.25vw, 18px);
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+/*==============================
+MENU LATERAL
+==============================*/
+
+.menu {
+    display: flex;
+    flex-direction: column;
+
+    gap: clamp(22px, 3.3vh, 34px);
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    color: #FFFFFF;
+    text-decoration: none;
+
+    padding: 12px 14px;
+    border-radius: 10px;
+    transition:  background-color 0.25s ease, transform 0.25s ease;
+}
+
+.menu a i {
+    width: 26px;
+
+    text-align: center;
+
+    font-size: clamp(19px, 1.5vw, 23px);
+}
+
+.menu a:hover {
+    background-color: rgba(255, 255, 255, 0.13);
+    transform: translateX(5px);
+    border-radius: 10px;
+}
+
+/*==============================
+SAIR
+==============================*/
+
+.logout {
+    margin-top: auto;
+    padding-top: 30px;
+}
+
+.logout a {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    color: #FFFFFF;
+    text-decoration: none;
+
+    font-size: clamp(16px, 1.3vw, 19px);
+    font-weight: 600;
+}
+
+.logout i {
+    width: 26px;
+
+    text-align: center;
+
+    font-size: clamp(19px, 1.5vw, 23px);
+}
+
+/*==============================
+CONTEÚDO PRINCIPAL
+==============================*/
+
+.content {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/*==============================
+BARRA SUPERIOR
+==============================*/
+
+.topbar {
+    height: clamp(72px, 8vh, 90px);
+    min-height: 72px;
+
+    background: #FFFFFF;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding:
+        0 clamp(24px, 4vw, 48px);
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+
+    color: #263238;
+
+    cursor: pointer;
+}
+
+.menu-btn i {
+    font-size: clamp(32px, 3vw, 42px);
+}
+
+.user {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    color: #263238;
+
+    font-size: clamp(17px, 1.5vw, 22px);
+    font-weight: 500;
+}
+
+.user i {
+    font-size: clamp(22px, 2vw, 28px);
+}
+
+/*==============================
+DASHBOARD
+==============================*/
+
+.dashboard {
+    flex: 1;
+
+    background: #EEF2F7;
+
+    padding:
+        clamp(26px, 4vh, 45px) clamp(28px, 5vw, 65px);
+
+    overflow: auto;
+}
+
+/*==============================
+TÍTULO E DESCRIÇÃO
+==============================*/
+
+.welcome {
+    width: 100%;
+}
+
+.welcome h1 {
+    color: #111827;
+
+    font-size: clamp(30px, 3.2vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+
+    margin-bottom: clamp(12px, 1.8vh, 18px);
+}
+
+.welcome p {
+    color: #6B7280;
+
+    font-size: clamp(16px, 1.4vw, 24px);
+    line-height: 1.4;
+
+    margin-bottom: clamp(28px, 4vh, 48px);
+}
+
+/*==============================
+GRADE DOS CARDS
+==============================*/
+
+.cards {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(240px, 340px));
+
+    justify-content: center;
+
+    column-gap: clamp(36px, 7vw, 120px);
+    row-gap: clamp(26px, 4vh, 52px);
+}
+
+/*==============================
+CARD
+==============================*/
+
+.card {
+    width: 100%;
+    min-height: 185px;
+    height: clamp(185px, 23vh, 230px);
+
+    background: #FFFFFF;
+
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: clamp(18px, 2vw, 26px);
+
+    text-align: center;
+    text-decoration: none;
+
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .09);
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 12px 26px rgba(0, 0, 0, .13);
+}
+
+.card>i {
+    color: #202020;
+
+    font-size: clamp(42px, 4vw, 56px);
+
+    margin-bottom: clamp(12px, 1.8vh, 20px);
+}
+
+.card h3 {
+    color: #111827;
+
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 700;
+    line-height: 1.2;
+
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: #6B7280;
+
+    font-size: clamp(14px, 1.2vw, 17px);
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+/*==============================
+NOTEBOOKS E TELAS MÉDIAS
+==============================*/
+
+@media (max-width:1200px) {
+
+    .sidebar {
+        width: 230px;
+    }
+
+    .dashboard {
+        padding:
+            26px 36px;
+    }
+
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(220px, 300px));
+
+        column-gap: 40px;
+        row-gap: 26px;
+    }
+
+    .card {
+        min-height: 175px;
+        height: 195px;
+    }
+
+    .welcome h1 {
+        font-size: 38px;
+    }
+
+    .welcome p {
+        font-size: 17px;
+        margin-bottom: 28px;
+    }
+}
+
+/*==============================
+NOTEBOOKS MENORES
+==============================*/
+
+@media (max-width:980px) {
+
+    .sidebar {
+        width: 210px;
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .logo h2 {
+        font-size: 14px;
+    }
+
+    .menu a,
+    .logout a {
+        font-size: 15px;
+        gap: 12px;
+    }
+
+    .dashboard {
+        padding:
+            24px 28px;
+    }
+
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(200px, 1fr));
+
+        column-gap: 24px;
+        row-gap: 24px;
+    }
+
+    .card {
+        height: 180px;
+    }
+}
+
+/*==============================
+TABLETS
+==============================*/
+
+@media (max-width:800px) {
+
+    .sidebar {
+        width: 86px;
+        padding:
+            24px 12px;
+    }
+
+    .logo {
+        margin-bottom: 45px;
+    }
+
+    .logo-icon {
+        gap: 2px;
+    }
+
+    .gear {
+        width: 34px;
+    }
+
+    .wrench {
+        width: 24px;
+    }
+
+    .logo h2,
+    .menu span,
+    .logout span {
+        display: none;
+    }
+
+    .menu a,
+    .logout a {
+        justify-content: center;
+        gap: 0;
+    }
+
+    .menu a i,
+    .logout i {
+        width: auto;
+        font-size: 23px;
+    }
+
+    .topbar {
+        padding: 0 24px;
+    }
+
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(190px, 1fr));
+    }
+}
+
+/*==============================
+CELULARES
+==============================*/
+
+@media (max-width:620px) {
+
+    .container {
+        display: block;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .topbar {
+        height: 68px;
+        min-height: 68px;
+
+        padding: 0 18px;
+    }
+
+    .dashboard {
+        padding:
+            24px 18px;
+    }
+
+    .welcome h1 {
+        font-size: 30px;
+    }
+
+    .welcome p {
+        font-size: 16px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 420px;
+        height: 190px;
+
+        margin: 0 auto;
+    }
+}
+
+/*==============================
+TELAS COM POUCA ALTURA
+==============================*/
+
+@media (min-width:801px) and (max-height:800px) {
+
+    .topbar {
+        height: 70px;
+        min-height: 70px;
+    }
+
+    .dashboard {
+        padding-top: 22px;
+        padding-bottom: 22px;
+    }
+
+    .welcome h1 {
+        font-size: 34px;
+        margin-bottom: 10px;
+    }
+
+    .welcome p {
+        font-size: 16px;
+        margin-bottom: 22px;
+    }
+
+    .cards {
+        row-gap: 20px;
+    }
+
+    .card {
+        height: 170px;
+        min-height: 170px;
+    }
+
+    .card>i {
+        font-size: 38px;
+        margin-bottom: 10px;
+    }
+
+    .card h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .card p {
+        font-size: 14px;
+    }
+
+    .logo {
+        margin-bottom: 38px;
+    }
+
+    .menu {
+        gap: 20px;
+    }
+}
