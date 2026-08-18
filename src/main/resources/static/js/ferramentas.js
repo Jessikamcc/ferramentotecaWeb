@@ -1,3 +1,5 @@
+const API_FERRAMENTAS = "/api/ferramentas";
+
 // ==================================================
 // ELEMENTOS DA PÁGINA
 // ==================================================
@@ -8,6 +10,7 @@ const campoBusca = document.getElementById("buscaFerramenta");
 const botaoBuscar = document.getElementById("btnBuscar");
 
 const campoNome = document.getElementById("nome");
+const campoDescricao = document.getElementById("descricao");
 const campoLocalizacao = document.getElementById("localizacao");
 
 const statusDisponivel = document.getElementById("disponivel");
@@ -17,83 +20,44 @@ const campoMotivo = document.getElementById("motivoDesativacao");
 const campoImagem = document.getElementById("imagemFerramenta");
 const areaUpload = document.querySelector(".area-upload");
 
+const botaoCadastrar = document.querySelector(".btn-cadastrar");
 const botaoAtualizar = document.getElementById("btnAtualizar");
-const botaoLimpar = document.querySelector(".btn-limpar");
 
-
-// Guarda o conteúdo original da área de imagem
 const conteudoOriginalUpload = areaUpload.innerHTML;
 
-// Informa se uma pesquisa já foi realizada
-let pesquisaRealizada = false;
+let ferramentaSelecionadaId = null;
+let imagemBase64 = null;
 
-// Desativa a validação automática do navegador
-// para utilizarmos nossas próprias mensagens
 formulario.noValidate = true;
-
-
-// ==================================================
-// PESQUISA DA FERRAMENTA
-// ==================================================
-
-function buscarFerramenta() {
-
-    const termoPesquisado = campoBusca.value.trim();
-
-    if (termoPesquisado === "") {
-        alert("Digite o ID ou o nome da ferramenta.");
-        campoBusca.focus();
-        return;
-    }
-
-    pesquisaRealizada = true;
-
-    alert(
-        `Pesquisa realizada por: ${termoPesquisado}\n\n` +
-        "A busca está sendo simulada porque ainda não existe conexão com o banco de dados."
-    );
-}
-
-
-botaoBuscar.addEventListener("click", buscarFerramenta);
-
-
-// Permite pesquisar pressionando Enter
-campoBusca.addEventListener("keydown", function (event) {
-
-    if (event.key === "Enter") {
-        event.preventDefault();
-        buscarFerramenta();
-    }
-
-});
 
 
 // ==================================================
 // STATUS DA FERRAMENTA
 // ==================================================
 
-function atualizarCampoMotivo() {
+function atualizarCampoMotivo(focarCampo = true) {
 
     if (statusDesativada.checked) {
-
         campoMotivo.disabled = false;
         campoMotivo.required = true;
-        campoMotivo.focus();
 
+        if (focarCampo) {
+            campoMotivo.focus();
+        }
     } else {
-
         campoMotivo.disabled = true;
         campoMotivo.required = false;
         campoMotivo.value = "";
-
-    }
-
+}
 }
 
+statusDisponivel.addEventListener("change", function () {
+    atualizarCampoMotivo();
+});
 
-statusDisponivel.addEventListener("change", atualizarCampoMotivo);
-statusDesativada.addEventListener("change", atualizarCampoMotivo);
+statusDesativada.addEventListener("change", function () {
+    atualizarCampoMotivo();
+});
 
 
 // ==================================================
@@ -103,10 +67,10 @@ statusDesativada.addEventListener("change", atualizarCampoMotivo);
 function validarFormulario() {
 
     const nome = campoNome.value.trim();
+    const descricao = campoDescricao.value.trim();
     const localizacao = campoLocalizacao.value;
     const motivo = campoMotivo.value.trim();
 
-    // Validação do nome
     if (nome === "") {
         alert("Informe o nome da ferramenta.");
         campoNome.focus();
@@ -119,14 +83,24 @@ function validarFormulario() {
         return false;
     }
 
-    // Validação da localização
+    if (nome.length > 100) {
+        alert("O nome da ferramenta deve possuir no máximo 100 caracteres.");
+        campoNome.focus();
+        return false;
+    }
+
+    if (descricao.length > 500) {
+        alert("A descrição deve possuir no máximo 500 caracteres.");
+        campoDescricao.focus();
+        return false;
+    }
+
     if (localizacao === "") {
         alert("Selecione a localização da ferramenta.");
         campoLocalizacao.focus();
         return false;
     }
 
-    // Validação do motivo da desativação
     if (statusDesativada.checked && motivo === "") {
         alert("Informe o motivo da desativação.");
         campoMotivo.focus();
@@ -139,15 +113,40 @@ function validarFormulario() {
         return false;
     }
 
+    if (motivo.length > 255) {
+        alert("O motivo da desativação deve possuir no máximo 255 caracteres.");
+        campoMotivo.focus();
+        return false;
+    }
+
     return true;
 }
 
 
 // ==================================================
-// CADASTRAR FERRAMENTA
+// DADOS ENVIADOS PARA A API
 // ==================================================
 
-formulario.addEventListener("submit", function (event) {
+function obterDadosFormulario() {
+
+    return {
+        nome: campoNome.value.trim(),
+        descricao: campoDescricao.value.trim(),
+        localizacao: campoLocalizacao.value,
+        disponivel: statusDisponivel.checked,
+        motivoDesativacao: statusDesativada.checked
+                ? campoMotivo.value.trim()
+                : null,
+        imagem: imagemBase64
+    };
+}
+
+
+// ==================================================
+// CADASTRAR FERRAMENTA NO MYSQL
+// ==================================================
+
+formulario.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
@@ -155,20 +154,160 @@ formulario.addEventListener("submit", function (event) {
         return;
     }
 
-    alert("Ferramenta cadastrada com sucesso!");
+    botaoCadastrar.disabled = true;
 
-    formulario.reset();
+    try {
+        const resposta = await fetch(API_FERRAMENTAS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(obterDadosFormulario())
+        });
 
+        if (!resposta.ok) {
+            throw new Error("Erro HTTP: " + resposta.status);
+        }
+
+        const ferramentaSalva = await resposta.json();
+
+        alert(
+                "Ferramenta cadastrada com sucesso!\n" +
+                "ID: " + ferramentaSalva.id
+                );
+
+        formulario.reset();
+    } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível cadastrar a ferramenta.");
+    } finally {
+        botaoCadastrar.disabled = false;
+    }
 });
 
 
 // ==================================================
-// ATUALIZAR FERRAMENTA
+// BUSCAR FERRAMENTA NO MYSQL
 // ==================================================
 
-botaoAtualizar.addEventListener("click", function () {
+async function buscarFerramenta() {
 
-    if (!pesquisaRealizada) {
+    const termoPesquisado = campoBusca.value.trim();
+
+    if (termoPesquisado === "") {
+        alert("Digite o ID ou o nome da ferramenta.");
+        campoBusca.focus();
+        return;
+    }
+
+    botaoBuscar.disabled = true;
+
+    try {
+        let ferramentaEncontrada = null;
+
+        if (/^\d+$/.test(termoPesquisado)) {
+            const resposta = await fetch(
+                    API_FERRAMENTAS + "/" + termoPesquisado
+                    );
+
+            if (resposta.status === 404) {
+                alert("Ferramenta não encontrada.");
+                return;
+            }
+
+            if (!resposta.ok) {
+                throw new Error("Erro HTTP: " + resposta.status);
+            }
+
+            ferramentaEncontrada = await resposta.json();
+        } else {
+            const resposta = await fetch(API_FERRAMENTAS);
+
+            if (!resposta.ok) {
+                throw new Error("Erro HTTP: " + resposta.status);
+            }
+
+            const ferramentas = await resposta.json();
+            const termoNormalizado = termoPesquisado.toLowerCase();
+
+            ferramentaEncontrada = ferramentas.find(function (ferramenta) {
+                return ferramenta.nome.toLowerCase() === termoNormalizado;
+            });
+
+            if (!ferramentaEncontrada) {
+                ferramentaEncontrada = ferramentas.find(function (ferramenta) {
+                    return ferramenta.nome
+                            .toLowerCase()
+                            .includes(termoNormalizado);
+                });
+            }
+
+            if (!ferramentaEncontrada) {
+                alert("Ferramenta não encontrada.");
+                return;
+            }
+        }
+
+        preencherFormulario(ferramentaEncontrada);
+        alert("Ferramenta encontrada.");
+    } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível realizar a busca.");
+    } finally {
+        botaoBuscar.disabled = false;
+    }
+}
+
+botaoBuscar.addEventListener("click", buscarFerramenta);
+
+campoBusca.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter") {
+        event.preventDefault();
+        buscarFerramenta();
+    }
+});
+
+
+// ==================================================
+// PREENCHER O FORMULÁRIO COM O RESULTADO DA BUSCA
+// ==================================================
+
+function preencherFormulario(ferramenta) {
+
+    ferramentaSelecionadaId = ferramenta.id;
+
+    campoNome.value = ferramenta.nome || "";
+    campoDescricao.value = ferramenta.descricao || "";
+    campoLocalizacao.value = ferramenta.localizacao || "";
+
+    if (ferramenta.disponivel) {
+        statusDisponivel.checked = true;
+    } else {
+        statusDesativada.checked = true;
+    }
+
+    campoMotivo.value = ferramenta.motivoDesativacao || "";
+    atualizarCampoMotivo(false);
+
+    imagemBase64 = ferramenta.imagem || null;
+    campoImagem.value = "";
+
+    if (imagemBase64) {
+        exibirPreviewImagem(imagemBase64, "Imagem cadastrada");
+    } else {
+        restaurarAreaUpload();
+    }
+}
+
+
+// ==================================================
+// ATUALIZAR FERRAMENTA NO MYSQL
+// ==================================================
+
+botaoAtualizar.addEventListener("click", async function () {
+
+    if (ferramentaSelecionadaId === null) {
         alert("Pesquise uma ferramenta antes de realizar a atualização.");
         campoBusca.focus();
         return;
@@ -178,8 +317,39 @@ botaoAtualizar.addEventListener("click", function () {
         return;
     }
 
-    alert("Dados da ferramenta atualizados com sucesso!");
+    botaoAtualizar.disabled = true;
 
+    try {
+        const resposta = await fetch(
+                API_FERRAMENTAS + "/" + ferramentaSelecionadaId,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(obterDadosFormulario())
+                }
+        );
+
+        if (resposta.status === 404) {
+            alert("A ferramenta não foi encontrada no banco de dados.");
+            return;
+        }
+
+        if (!resposta.ok) {
+            throw new Error("Erro HTTP: " + resposta.status);
+        }
+
+        const ferramentaAtualizada = await resposta.json();
+        preencherFormulario(ferramentaAtualizada);
+
+        alert("Dados da ferramenta atualizados com sucesso!");
+    } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível atualizar a ferramenta.");
+    } finally {
+        botaoAtualizar.disabled = false;
+    }
 });
 
 
@@ -193,98 +363,77 @@ function processarImagem(arquivo) {
         return;
     }
 
-    const tiposPermitidos = [
-        "image/jpeg",
-        "image/png"
-    ];
-
+    const tiposPermitidos = ["image/jpeg", "image/png"];
     const tamanhoMaximo = 2 * 1024 * 1024;
 
-    // Verifica o formato
     if (!tiposPermitidos.includes(arquivo.type)) {
-
         alert("Formato inválido. Selecione uma imagem JPG ou PNG.");
-
         campoImagem.value = "";
+        imagemBase64 = null;
         restaurarAreaUpload();
-
         return;
     }
 
-    // Verifica o tamanho
     if (arquivo.size > tamanhoMaximo) {
-
         alert("A imagem deve possuir no máximo 2 MB.");
-
         campoImagem.value = "";
+        imagemBase64 = null;
         restaurarAreaUpload();
-
         return;
     }
-
-    exibirPreviewImagem(arquivo);
-
-}
-
-
-function exibirPreviewImagem(arquivo) {
 
     const leitor = new FileReader();
 
     leitor.addEventListener("load", function () {
-
-        areaUpload.innerHTML = "";
-        areaUpload.classList.add("com-preview");
-
-        // Mantém o quadro no tamanho correto
-        areaUpload.style.width = "360px";
-        areaUpload.style.height = "400px";
-        areaUpload.style.padding = "16px";
-        areaUpload.style.overflow = "hidden";
-
-        const imagem = document.createElement("img");
-
-        imagem.src = leitor.result;
-        imagem.alt = "Pré-visualização da ferramenta";
-        imagem.classList.add("preview-imagem");
-
-        // Obriga a imagem a entrar dentro do quadro
-        imagem.style.display = "block";
-        imagem.style.width = "100%";
-        imagem.style.height = "300px";
-        imagem.style.maxWidth = "100%";
-        imagem.style.maxHeight = "300px";
-        imagem.style.objectFit = "contain";
-
-        const nomeArquivo = document.createElement("span");
-
-        nomeArquivo.textContent = arquivo.name;
-        nomeArquivo.classList.add("nome-arquivo");
-
-        nomeArquivo.style.display = "block";
-        nomeArquivo.style.width = "100%";
-        nomeArquivo.style.marginTop = "12px";
-        nomeArquivo.style.overflow = "hidden";
-        nomeArquivo.style.textAlign = "center";
-        nomeArquivo.style.textOverflow = "ellipsis";
-        nomeArquivo.style.whiteSpace = "nowrap";
-
-        areaUpload.appendChild(imagem);
-        areaUpload.appendChild(nomeArquivo);
-
+        imagemBase64 = leitor.result;
+        exibirPreviewImagem(imagemBase64, arquivo.name);
     });
 
     leitor.readAsDataURL(arquivo);
-
 }
 
+function exibirPreviewImagem(enderecoImagem, nomeArquivo) {
+
+    areaUpload.innerHTML = "";
+    areaUpload.classList.add("com-preview");
+
+    areaUpload.style.width = "360px";
+    areaUpload.style.height = "400px";
+    areaUpload.style.padding = "16px";
+    areaUpload.style.overflow = "hidden";
+
+    const imagem = document.createElement("img");
+
+    imagem.src = enderecoImagem;
+    imagem.alt = "Pré-visualização da ferramenta";
+    imagem.classList.add("preview-imagem");
+
+    imagem.style.display = "block";
+    imagem.style.width = "100%";
+    imagem.style.height = "300px";
+    imagem.style.maxWidth = "100%";
+    imagem.style.maxHeight = "300px";
+    imagem.style.objectFit = "contain";
+
+    const textoNomeArquivo = document.createElement("span");
+
+    textoNomeArquivo.textContent = nomeArquivo;
+    textoNomeArquivo.classList.add("nome-arquivo");
+
+    textoNomeArquivo.style.display = "block";
+    textoNomeArquivo.style.width = "100%";
+    textoNomeArquivo.style.marginTop = "12px";
+    textoNomeArquivo.style.overflow = "hidden";
+    textoNomeArquivo.style.textAlign = "center";
+    textoNomeArquivo.style.textOverflow = "ellipsis";
+    textoNomeArquivo.style.whiteSpace = "nowrap";
+
+    areaUpload.appendChild(imagem);
+    areaUpload.appendChild(textoNomeArquivo);
+}
 
 campoImagem.addEventListener("change", function () {
-
-    const arquivoSelecionado = campoImagem.files[0];
-
-    processarImagem(arquivoSelecionado);
-
+    processarImagem(campoImagem.files[0]);
 });
 
 
@@ -293,24 +442,17 @@ campoImagem.addEventListener("change", function () {
 // ==================================================
 
 areaUpload.addEventListener("dragover", function (event) {
-
     event.preventDefault();
     areaUpload.classList.add("arrastando");
-
 });
-
 
 areaUpload.addEventListener("dragleave", function () {
-
     areaUpload.classList.remove("arrastando");
-
 });
-
 
 areaUpload.addEventListener("drop", function (event) {
 
     event.preventDefault();
-
     areaUpload.classList.remove("arrastando");
 
     const arquivo = event.dataTransfer.files[0];
@@ -320,12 +462,10 @@ areaUpload.addEventListener("drop", function (event) {
     }
 
     const transferencia = new DataTransfer();
-
     transferencia.items.add(arquivo);
     campoImagem.files = transferencia.files;
 
     processarImagem(arquivo);
-
 });
 
 
@@ -336,28 +476,25 @@ areaUpload.addEventListener("drop", function (event) {
 function restaurarAreaUpload() {
 
     areaUpload.innerHTML = conteudoOriginalUpload;
+    areaUpload.classList.remove("com-preview", "arrastando");
 
-    areaUpload.classList.remove(
-        "com-preview",
-        "arrastando"
-    );
-
+    areaUpload.style.width = "";
+    areaUpload.style.height = "";
+    areaUpload.style.padding = "";
+    areaUpload.style.overflow = "";
 }
-
 
 formulario.addEventListener("reset", function () {
 
     setTimeout(function () {
-
-        pesquisaRealizada = false;
+        ferramentaSelecionadaId = null;
+        imagemBase64 = null;
 
         restaurarAreaUpload();
-        atualizarCampoMotivo();
-
+        atualizarCampoMotivo(false);
     }, 0);
-
-    
-
 });
+
+atualizarCampoMotivo(false);
 
 
