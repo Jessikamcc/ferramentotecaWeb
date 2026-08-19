@@ -22,6 +22,7 @@ const areaUpload = document.querySelector(".area-upload");
 
 const botaoCadastrar = document.querySelector(".btn-cadastrar");
 const botaoAtualizar = document.getElementById("btnAtualizar");
+const botaoExcluir = document.getElementById("btnExcluir");
 
 const conteudoOriginalUpload = areaUpload.innerHTML;
 
@@ -48,7 +49,7 @@ function atualizarCampoMotivo(focarCampo = true) {
         campoMotivo.disabled = true;
         campoMotivo.required = false;
         campoMotivo.value = "";
-}
+    }
 }
 
 statusDisponivel.addEventListener("change", function () {
@@ -135,8 +136,8 @@ function obterDadosFormulario() {
         localizacao: campoLocalizacao.value,
         disponivel: statusDisponivel.checked,
         motivoDesativacao: statusDesativada.checked
-                ? campoMotivo.value.trim()
-                : null,
+            ? campoMotivo.value.trim()
+            : null,
         imagem: imagemBase64
     };
 }
@@ -172,9 +173,9 @@ formulario.addEventListener("submit", async function (event) {
         const ferramentaSalva = await resposta.json();
 
         alert(
-                "Ferramenta cadastrada com sucesso!\n" +
-                "ID: " + ferramentaSalva.id
-                );
+            "Ferramenta cadastrada com sucesso!\n" +
+            "ID: " + ferramentaSalva.id
+        );
 
         formulario.reset();
     } catch (erro) {
@@ -207,8 +208,8 @@ async function buscarFerramenta() {
 
         if (/^\d+$/.test(termoPesquisado)) {
             const resposta = await fetch(
-                    API_FERRAMENTAS + "/" + termoPesquisado
-                    );
+                API_FERRAMENTAS + "/" + termoPesquisado
+            );
 
             if (resposta.status === 404) {
                 alert("Ferramenta não encontrada.");
@@ -237,8 +238,8 @@ async function buscarFerramenta() {
             if (!ferramentaEncontrada) {
                 ferramentaEncontrada = ferramentas.find(function (ferramenta) {
                     return ferramenta.nome
-                            .toLowerCase()
-                            .includes(termoNormalizado);
+                        .toLowerCase()
+                        .includes(termoNormalizado);
                 });
             }
 
@@ -321,14 +322,14 @@ botaoAtualizar.addEventListener("click", async function () {
 
     try {
         const resposta = await fetch(
-                API_FERRAMENTAS + "/" + ferramentaSelecionadaId,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(obterDadosFormulario())
-                }
+            API_FERRAMENTAS + "/" + ferramentaSelecionadaId,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(obterDadosFormulario())
+            }
         );
 
         if (resposta.status === 404) {
@@ -349,6 +350,60 @@ botaoAtualizar.addEventListener("click", async function () {
         alert("Não foi possível atualizar a ferramenta.");
     } finally {
         botaoAtualizar.disabled = false;
+    }
+});
+
+
+// ==================================================
+// EXCLUIR FERRAMENTA DO MYSQL
+// ==================================================
+
+botaoExcluir.addEventListener("click", async function () {
+
+    if (ferramentaSelecionadaId === null) {
+        alert("Pesquise uma ferramenta antes de realizar a exclusão.");
+        campoBusca.focus();
+        return;
+    }
+
+    const confirmou = confirm(
+        `Deseja realmente excluir a ferramenta ${campoNome.value.trim()}?`
+    );
+
+    if (!confirmou) {
+        return;
+    }
+
+    botaoExcluir.disabled = true;
+
+    try {
+        const resposta = await fetch(
+            API_FERRAMENTAS + "/" + ferramentaSelecionadaId,
+            {
+                method: "DELETE"
+            }
+        );
+
+        if (resposta.status === 404) {
+            alert("A ferramenta não foi encontrada no banco de dados.");
+            formulario.reset();
+            return;
+        }
+
+        if (!resposta.ok) {
+            throw new Error("Erro HTTP: " + resposta.status);
+        }
+
+        alert("Ferramenta excluída com sucesso!");
+        formulario.reset();
+    } catch (erro) {
+        console.error(erro);
+        alert(
+            "Não foi possível excluir a ferramenta. " +
+            "Verifique se ela possui empréstimos cadastrados."
+        );
+    } finally {
+        botaoExcluir.disabled = false;
     }
 });
 
@@ -498,3 +553,20 @@ formulario.addEventListener("reset", function () {
 atualizarCampoMotivo(false);
 
 
+// ==================================================
+// ABRIR FERRAMENTA ESCOLHIDA NO INVENTÁRIO
+// ==================================================
+
+async function carregarFerramentaParaEdicao() {
+    const parametros = new URLSearchParams(window.location.search);
+    const idParaEditar = parametros.get("editar");
+
+    if (!idParaEditar || !/^\d+$/.test(idParaEditar)) {
+        return;
+    }
+
+    campoBusca.value = idParaEditar;
+    await buscarFerramenta();
+}
+
+carregarFerramentaParaEdicao();

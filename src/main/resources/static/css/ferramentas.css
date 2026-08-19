@@ -389,6 +389,22 @@ input:disabled {
     background-color: #d1d5db;
 }
 
+/* Botão Excluir */
+.btn-excluir {
+    color: #ffffff;
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+.btn-excluir:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.btn-excluir:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 
 /* ==================================================
    RESPONSIVIDADE

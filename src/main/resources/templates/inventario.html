@@ -71,7 +71,8 @@
                     <select id="localizacao" name="localizacao">
                         <option value="">Todas</option>
                         <option value="almoxarifado">Almoxarifado</option>
-                        <option value="oficina-2">Oficina 2</option>
+                        <option value="oficina">Oficina</option>
+                        <option value="deposito">Depósito</option>
                     </select>
                 </div>
 
@@ -103,149 +104,13 @@
                             <th scope="col">Data de Devolução</th>
                             <th scope="col">Responsável</th>
                             <th scope="col">Motivo da Desativação</th>
-                            <th scope="col">Ações</th>
                         </tr>
                     </thead>
 
-                    <tbody>
-
-                        <!-- Furadeira -->
-                        <tr>
-                            <td>1</td>
-                            <td>Furadeira</td>
-
-                            <td>
-                                <span class="status status-disponivel">
-                                    Disponível
-                                </span>
-                            </td>
-
-                            <td>Almoxarifado</td>
-                            <td>15/06/2026</td>
-                            <td>João Silva</td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>
-                                <div class="acoes">
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Visualizar Furadeira"
-                                        aria-label="Visualizar Furadeira"
-                                    >
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Editar Furadeira"
-                                        aria-label="Editar Furadeira"
-                                    >
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Martelo -->
-                        <tr>
-                            <td>2</td>
-                            <td>Martelo</td>
-
-                            <td>
-                                <span class="status status-emprestada">
-                                    Emprestada
-                                </span>
-                            </td>
-
-                            <td>Oficina 2</td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>
-                                <div class="acoes">
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Visualizar Martelo"
-                                        aria-label="Visualizar Martelo"
-                                    >
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Editar Martelo"
-                                        aria-label="Editar Martelo"
-                                    >
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Chave -->
-                        <tr>
-                            <td>3</td>
-                            <td>Chave</td>
-
-                            <td>
-                                <span class="status status-desativada">
-                                    Desativada
-                                </span>
-                            </td>
-
-                            <td>Almoxarifado</td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>
-                                <span class="sem-dado">--------</span>
-                            </td>
-
-                            <td>Dano irreparável</td>
-
-                            <td>
-                                <div class="acoes">
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Visualizar Chave"
-                                        aria-label="Visualizar Chave"
-                                    >
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-
-                                    <button
-                                        class="botao-acao"
-                                        type="button"
-                                        title="Editar Chave"
-                                        aria-label="Editar Chave"
-                                    >
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
+                    <tbody id="corpoTabela">
+                        <!-- Conteúdo carregado pelo inventario.js -->
                     </tbody>
+
                 </table>
 
             </div>
