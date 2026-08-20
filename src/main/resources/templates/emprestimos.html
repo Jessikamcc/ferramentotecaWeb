@@ -12,7 +12,7 @@
     >
 
     <!-- CSS da página -->
-    <link rel="stylesheet" href="/css/emprestimos.css">
+    <link rel="stylesheet" href="/css/emprestimos.css?v=2">
 </head>
 
 <body>
@@ -119,6 +119,33 @@
                     </div>
                 </form>
             </section>
+                        <!-- Empréstimos ativos -->
+            <section class="secao-ativos" aria-labelledby="titulo-ativos">
+                <h2 id="titulo-ativos">Empréstimos ativos</h2>
+
+                <div class="tabela-emprestimos">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ferramenta</th>
+                                <th>Professor</th>
+                                <th>Empréstimo</th>
+                                <th>Devolução prevista</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="corpoTabelaEmprestimos">
+                            <!-- Preenchido pelo JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <p id="mensagemSemEmprestimos">
+                    Nenhum empréstimo ativo.
+                </p>
+            </section>
+            
         </div>
     </main>
 

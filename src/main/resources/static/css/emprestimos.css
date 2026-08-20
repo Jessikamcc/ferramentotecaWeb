@@ -313,13 +313,140 @@ button {
 .btn-confirmar:active {
     transform: translateY(1px);
 }
+/* ==================================================
+   EMPRÉSTIMOS ATIVOS
+================================================== */
 
+.secao-ativos {
+    width: min(calc(100vw - 48px), 1000px);
+    margin-top: 64px;
+    margin-left: 50%;
+    padding-top: 34px;
+    border-top: 1px solid #dbe4ef;
+    transform: translateX(-50%);
+}
+
+.secao-ativos h2 {
+    margin-bottom: 20px;
+    color: #17468b;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.tabela-emprestimos {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #d5dfeb;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.tabela-emprestimos table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.tabela-emprestimos th {
+    padding: 14px 12px;
+    background-color: #17468b;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tabela-emprestimos td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e0e7f0;
+    color: #34445a;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tabela-emprestimos tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-emprestimos tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.tabela-emprestimos tbody tr:hover {
+    background-color: #f5f8fc;
+}
+
+.tabela-emprestimos th:first-child {
+    width: 24%;
+}
+
+.tabela-emprestimos th:nth-child(2) {
+    width: 22%;
+}
+
+.tabela-emprestimos th:nth-child(3),
+.tabela-emprestimos th:nth-child(4) {
+    width: 18%;
+}
+
+.tabela-emprestimos th:last-child {
+    width: 18%;
+}
+
+.btn-devolver {
+    min-width: 106px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border-radius: 5px;
+    background-color: #1769bd;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-devolver:hover {
+    background-color: #12579e;
+}
+
+.btn-devolver:active {
+    transform: translateY(1px);
+}
+
+.btn-devolver:disabled,
+.btn-confirmar:disabled,
+.btn-buscar:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+#mensagemSemEmprestimos {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px dashed #c7d4e5;
+    border-radius: 6px;
+    background-color: #f7f9fc;
+    color: #6b7c92;
+    font-size: 12px;
+    text-align: center;
+}
 
 /* ==================================================
    RESPONSIVIDADE - TABLETS E TELAS MENORES
 ================================================== */
 
 @media (max-width: 700px) {
+
     .cabecalho-emprestimo {
         min-height: 68px;
         padding: 0 28px;
@@ -341,6 +468,11 @@ button {
     .area-confirmacao {
         margin-top: 55px;
     }
+    
+    .secao-ativos {
+        width: calc(100vw - 40px);
+        margin-top: 55px;
+    }
 }
 
 
@@ -349,6 +481,8 @@ button {
 ================================================== */
 
 @media (max-width: 520px) {
+
+  
     .cabecalho-emprestimo {
         min-height: 62px;
         padding: 0 20px;
@@ -410,4 +544,19 @@ button {
     .btn-confirmar {
         width: 100%;
     }
+    
+     .secao-ativos {
+        width: calc(100vw - 32px);
+        margin-top: 45px;
+        padding-top: 28px;
+    }
+
+    .secao-ativos h2 {
+        font-size: 15px;
+    }
+
+    .tabela-emprestimos table {
+        min-width: 700px;
+    }
+
 }

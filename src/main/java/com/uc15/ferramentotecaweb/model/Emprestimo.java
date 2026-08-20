@@ -29,6 +29,12 @@ public class Emprestimo {
     @Column(name = "data_devolucao", nullable = false)
     private LocalDate dataDevolucao;
 
+    @Column(nullable = false)
+    private boolean devolvido = false;
+
+    @Column(name = "data_devolucao_real")
+    private LocalDate dataDevolucaoReal;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "ferramenta_id", nullable = false)
     private Ferramenta ferramenta;
@@ -68,6 +74,22 @@ public class Emprestimo {
         this.dataDevolucao = dataDevolucao;
     }
 
+    public boolean isDevolvido() {
+    return devolvido;
+    }
+
+    public void setDevolvido(boolean devolvido) {
+    this.devolvido = devolvido;
+    }
+
+    public LocalDate getDataDevolucaoReal() {
+    return dataDevolucaoReal;
+    }
+
+    public void setDataDevolucaoReal(LocalDate dataDevolucaoReal) {
+    this.dataDevolucaoReal = dataDevolucaoReal;
+    }
+    
     public Ferramenta getFerramenta() {
         return ferramenta;
     }

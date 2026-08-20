@@ -2,49 +2,50 @@
 // ELEMENTOS DA PÁGINA
 // ==================================================
 
-const formPesquisa = document.getElementById("formPesquisa");
-const campoFerramenta = document.getElementById("ferramenta");
-const resultadoFerramenta = document.getElementById("resultadoFerramenta");
+const formPesquisa =
+    document.getElementById("formPesquisa");
 
-const formEmprestimo = document.getElementById("formEmprestimo");
-const campoProfessor = document.getElementById("professor");
-const campoDataEmprestimo = document.getElementById("dataEmprestimo");
-const campoDataDevolucao = document.getElementById("dataDevolucao");
+const campoFerramenta =
+    document.getElementById("ferramenta");
 
+const resultadoFerramenta =
+    document.getElementById("resultadoFerramenta");
 
-// ==================================================
-// DADOS APENAS PARA DEMONSTRAÇÃO DO FRONT-END
-// ==================================================
+const formEmprestimo =
+    document.getElementById("formEmprestimo");
 
-// Estes dados são temporários.
-// Futuramente poderão vir do banco de dados.
+const campoProfessor =
+    document.getElementById("professor");
 
-const ferramentaExemplo = {
-    id: 1,
-    nome: "Furadeira",
-    descricao: "Furadeira de impacto 16mm - 110V",
-    localizacao: "Almoxarifado",
-    disponivel: true
-};
+const campoDataEmprestimo =
+    document.getElementById("dataEmprestimo");
+
+const campoDataDevolucao =
+    document.getElementById("dataDevolucao");
+
+const corpoTabelaEmprestimos =
+    document.getElementById("corpoTabelaEmprestimos");
+
+const mensagemSemEmprestimos =
+    document.getElementById("mensagemSemEmprestimos");
 
 let ferramentaSelecionada = null;
 
 
 // ==================================================
-// CONFIGURAÇÃO INICIAL DA PÁGINA
+// CONFIGURAÇÃO INICIAL
 // ==================================================
 
-// O card começa escondido.
-// Ele aparece somente depois que a ferramenta é pesquisada.
+const hoje = obterDataAtual();
 
 resultadoFerramenta.hidden = true;
-
-const hoje = obterDataAtual();
 
 campoDataEmprestimo.min = hoje;
 campoDataEmprestimo.value = hoje;
 
 campoDataDevolucao.min = adicionarUmDia(hoje);
+
+carregarEmprestimosAtivos();
 
 
 // ==================================================
@@ -71,283 +72,509 @@ function obterDataAtual() {
 function adicionarUmDia(dataInformada) {
     const partes = dataInformada.split("-");
 
-    const ano = Number(partes[0]);
-    const mes = Number(partes[1]) - 1;
-    const dia = Number(partes[2]);
-
-    const data = new Date(ano, mes, dia);
+    const data = new Date(
+        Number(partes[0]),
+        Number(partes[1]) - 1,
+        Number(partes[2])
+    );
 
     data.setDate(data.getDate() + 1);
 
-    const novoAno = data.getFullYear();
+    const ano = data.getFullYear();
 
-    const novoMes = String(
+    const mes = String(
         data.getMonth() + 1
     ).padStart(2, "0");
 
-    const novoDia = String(
+    const dia = String(
         data.getDate()
     ).padStart(2, "0");
 
-    return `${novoAno}-${novoMes}-${novoDia}`;
+    return `${ano}-${mes}-${dia}`;
 }
 
 
 function formatarData(dataInformada) {
+    if (!dataInformada) {
+        return "-";
+    }
+
     const partes = dataInformada.split("-");
 
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 
+function escaparHtml(valor) {
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
 function esconderResultado() {
     ferramentaSelecionada = null;
-
     resultadoFerramenta.hidden = true;
 }
 
 
+async function obterMensagemErro(resposta) {
+    try {
+        const dados = await resposta.json();
+
+        return dados.detail
+            || dados.message
+            || "Não foi possível concluir a operação.";
+
+    } catch {
+        return "Não foi possível concluir a operação.";
+    }
+}
+
+
 // ==================================================
-// PESQUISA DA FERRAMENTA
+// PESQUISA DE FERRAMENTA NO BANCO
 // ==================================================
 
-formPesquisa.addEventListener("submit", function (event) {
-    event.preventDefault();
+formPesquisa.addEventListener(
+    "submit",
+    async function (event) {
 
-    const pesquisa = campoFerramenta.value
-        .toLowerCase()
-        .trim();
+        event.preventDefault();
 
-    // Validação do campo vazio
+        const pesquisa =
+            campoFerramenta.value.trim();
 
-    if (pesquisa === "") {
-        esconderResultado();
+        if (pesquisa === "") {
+            esconderResultado();
 
-        alert("Digite o ID ou o nome da ferramenta.");
+            alert(
+                "Digite o ID ou o nome da ferramenta."
+            );
 
-        campoFerramenta.focus();
+            campoFerramenta.focus();
+            return;
+        }
 
-        return;
+        try {
+            const resposta = await fetch(
+                "/api/ferramentas"
+            );
+
+            if (!resposta.ok) {
+                throw new Error(
+                    "Não foi possível buscar as ferramentas."
+                );
+            }
+
+            const ferramentas = await resposta.json();
+
+            const pesquisaNormalizada =
+                pesquisa.toLowerCase();
+
+            const pesquisaNumerica =
+                /^\d+$/.test(pesquisa);
+
+            let ferramentaEncontrada;
+
+            if (pesquisaNumerica) {
+                ferramentaEncontrada =
+                    ferramentas.find(function (ferramenta) {
+                        return Number(ferramenta.id)
+                            === Number(pesquisa);
+                    });
+
+            } else {
+                ferramentaEncontrada =
+                    ferramentas.find(function (ferramenta) {
+                        return ferramenta.nome
+                            .toLowerCase()
+                            .includes(pesquisaNormalizada);
+                    });
+            }
+
+            if (!ferramentaEncontrada) {
+                esconderResultado();
+
+                alert("Ferramenta não encontrada.");
+
+                campoFerramenta.focus();
+                return;
+            }
+
+            if (!ferramentaEncontrada.disponivel) {
+                esconderResultado();
+
+                alert(
+                    "A ferramenta pesquisada não está disponível."
+                );
+
+                return;
+            }
+
+            ferramentaSelecionada =
+                ferramentaEncontrada;
+
+            resultadoFerramenta.innerHTML = `
+                <p>
+                    <strong>ID:</strong>
+                    ${ferramentaEncontrada.id}
+                </p>
+
+                <p>
+                    <strong>Nome:</strong>
+                    ${escaparHtml(ferramentaEncontrada.nome)}
+                </p>
+
+                <p>
+                    <strong>Descrição:</strong>
+                    ${escaparHtml(
+                        ferramentaEncontrada.descricao
+                        || "Não informada"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Localização:</strong>
+                    ${escaparHtml(
+                        ferramentaEncontrada.localizacao
+                    )}
+                </p>
+            `;
+
+            resultadoFerramenta.hidden = false;
+
+        } catch (erro) {
+            esconderResultado();
+
+            alert(erro.message);
+        }
     }
-
-    // Permite pesquisar pelo ID 1 ou pelo nome Furadeira
-
-    const pesquisaPorId =
-        pesquisa === String(ferramentaExemplo.id);
-
-    const pesquisaPorNome =
-        ferramentaExemplo.nome
-            .toLowerCase()
-            .includes(pesquisa);
-
-    // Ferramenta não encontrada
-
-    if (!pesquisaPorId && !pesquisaPorNome) {
-        esconderResultado();
-
-        alert("Ferramenta não encontrada nesta demonstração.");
-
-        campoFerramenta.focus();
-
-        return;
-    }
-
-    // Ferramenta indisponível
-
-    if (!ferramentaExemplo.disponivel) {
-        esconderResultado();
-
-        alert("A ferramenta pesquisada não está disponível.");
-
-        return;
-    }
-
-    // Guarda a ferramenta encontrada
-
-    ferramentaSelecionada = ferramentaExemplo;
-
-    // Coloca os dados no card
-
-    resultadoFerramenta.innerHTML = `
-        <p>
-            <strong>Nome:</strong>
-            ${ferramentaExemplo.nome}
-        </p>
-
-        <p>
-            <strong>Descrição:</strong>
-            ${ferramentaExemplo.descricao}
-        </p>
-
-        <p>
-            <strong>Localização:</strong>
-            ${ferramentaExemplo.localizacao}
-        </p>
-    `;
-
-    // Mostra o card
-
-    resultadoFerramenta.hidden = false;
-});
+);
 
 
-// Se o conteúdo da pesquisa for alterado,
-// a ferramenta anterior deixa de estar selecionada.
-
-campoFerramenta.addEventListener("input", function () {
-    esconderResultado();
-});
+campoFerramenta.addEventListener(
+    "input",
+    esconderResultado
+);
 
 
 // ==================================================
 // CONTROLE DAS DATAS
 // ==================================================
 
-campoDataEmprestimo.addEventListener("change", function () {
-    if (campoDataEmprestimo.value === "") {
-        campoDataDevolucao.min = adicionarUmDia(hoje);
+campoDataEmprestimo.addEventListener(
+    "change",
+    function () {
 
-        return;
+        if (campoDataEmprestimo.value === "") {
+            campoDataDevolucao.min =
+                adicionarUmDia(hoje);
+
+            campoDataDevolucao.value = "";
+            return;
+        }
+
+        const primeiraDataDevolucao =
+            adicionarUmDia(
+                campoDataEmprestimo.value
+            );
+
+        campoDataDevolucao.min =
+            primeiraDataDevolucao;
+
+        if (
+            campoDataDevolucao.value !== ""
+            && campoDataDevolucao.value
+                <= campoDataEmprestimo.value
+        ) {
+            campoDataDevolucao.value = "";
+        }
     }
-
-    const primeiraDataDevolucao = adicionarUmDia(
-        campoDataEmprestimo.value
-    );
-
-    // A devolução só poderá acontecer depois do empréstimo
-
-    campoDataDevolucao.min = primeiraDataDevolucao;
-
-    // Limpa a devolução se ela ficar anterior ao empréstimo
-
-    if (
-        campoDataDevolucao.value !== "" &&
-        campoDataDevolucao.value <= campoDataEmprestimo.value
-    ) {
-        campoDataDevolucao.value = "";
-    }
-});
+);
 
 
 // ==================================================
-// VALIDAÇÃO E CONFIRMAÇÃO DO EMPRÉSTIMO
+// CADASTRAR EMPRÉSTIMO
 // ==================================================
 
-formEmprestimo.addEventListener("submit", function (event) {
-    event.preventDefault();
+formEmprestimo.addEventListener(
+    "submit",
+    async function (event) {
 
-    const professor = campoProfessor.value.trim();
+        event.preventDefault();
 
-    const dataEmprestimo =
-        campoDataEmprestimo.value;
+        const professor =
+            campoProfessor.value.trim();
 
-    const dataDevolucao =
-        campoDataDevolucao.value;
+        const dataEmprestimo =
+            campoDataEmprestimo.value;
+
+        const dataDevolucao =
+            campoDataDevolucao.value;
+
+        if (ferramentaSelecionada === null) {
+            alert(
+                "Pesquise e selecione uma ferramenta disponível."
+            );
+
+            campoFerramenta.focus();
+            return;
+        }
+
+        if (professor.length < 3) {
+            alert(
+                "O nome do professor deve ter pelo menos 3 caracteres."
+            );
+
+            campoProfessor.focus();
+            return;
+        }
+
+        if (dataEmprestimo === "") {
+            alert("Informe a data do empréstimo.");
+
+            campoDataEmprestimo.focus();
+            return;
+        }
+
+        if (dataEmprestimo < hoje) {
+            alert(
+                "A data do empréstimo não pode ser anterior à data atual."
+            );
+
+            campoDataEmprestimo.focus();
+            return;
+        }
+
+        if (dataDevolucao === "") {
+            alert("Informe a data de devolução.");
+
+            campoDataDevolucao.focus();
+            return;
+        }
+
+        if (dataDevolucao <= dataEmprestimo) {
+            alert(
+                "A data de devolução deve ser posterior à data do empréstimo."
+            );
+
+            campoDataDevolucao.focus();
+            return;
+        }
+
+        const dadosEmprestimo = {
+            professor: professor,
+            dataEmprestimo: dataEmprestimo,
+            dataDevolucao: dataDevolucao,
+
+            ferramenta: {
+                id: ferramentaSelecionada.id
+            }
+        };
+
+        const botaoConfirmar =
+            formEmprestimo.querySelector(
+                ".btn-confirmar"
+            );
+
+        botaoConfirmar.disabled = true;
+
+        try {
+            const resposta = await fetch(
+                "/api/emprestimos",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(
+                        dadosEmprestimo
+                    )
+                }
+            );
+
+            if (!resposta.ok) {
+                const mensagem =
+                    await obterMensagemErro(resposta);
+
+                throw new Error(mensagem);
+            }
+
+            await resposta.json();
+
+            alert(
+                "Empréstimo cadastrado com sucesso!"
+            );
+
+            formEmprestimo.reset();
+
+            campoFerramenta.value = "";
+
+            esconderResultado();
+
+            campoDataEmprestimo.value = hoje;
+            campoDataEmprestimo.min = hoje;
+
+            campoDataDevolucao.min =
+                adicionarUmDia(hoje);
+
+            await carregarEmprestimosAtivos();
+
+        } catch (erro) {
+            alert(erro.message);
+
+        } finally {
+            botaoConfirmar.disabled = false;
+        }
+    }
+);
 
 
-    // Validação da ferramenta
+// ==================================================
+// LISTAR EMPRÉSTIMOS ATIVOS
+// ==================================================
 
-    if (ferramentaSelecionada === null) {
-        alert(
-            "Pesquise e selecione uma ferramenta disponível."
+async function carregarEmprestimosAtivos() {
+    corpoTabelaEmprestimos.innerHTML = "";
+
+    try {
+        const resposta = await fetch(
+            "/api/emprestimos/ativos"
         );
 
-        campoFerramenta.focus();
+        if (!resposta.ok) {
+            throw new Error(
+                "Não foi possível carregar os empréstimos."
+            );
+        }
 
-        return;
+        const emprestimos = await resposta.json();
+
+        if (emprestimos.length === 0) {
+            mensagemSemEmprestimos.hidden = false;
+            return;
+        }
+
+        mensagemSemEmprestimos.hidden = true;
+
+        emprestimos.forEach(function (emprestimo) {
+            const linha =
+                document.createElement("tr");
+
+            const nomeFerramenta =
+                emprestimo.ferramenta
+                    ? emprestimo.ferramenta.nome
+                    : "-";
+
+            linha.innerHTML = `
+                <td>
+                    ${escaparHtml(nomeFerramenta)}
+                </td>
+
+                <td>
+                    ${escaparHtml(emprestimo.professor)}
+                </td>
+
+                <td>
+                    ${formatarData(
+                        emprestimo.dataEmprestimo
+                    )}
+                </td>
+
+                <td>
+                    ${formatarData(
+                        emprestimo.dataDevolucao
+                    )}
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="btn-devolver"
+                        data-id="${emprestimo.id}"
+                    >
+                        <i class="bi bi-arrow-return-left"></i>
+                        Devolver
+                    </button>
+                </td>
+            `;
+
+            corpoTabelaEmprestimos.appendChild(
+                linha
+            );
+        });
+
+    } catch (erro) {
+        mensagemSemEmprestimos.hidden = false;
+
+        mensagemSemEmprestimos.textContent =
+            erro.message;
     }
+}
 
 
-    // Validação do professor
+// ==================================================
+// REGISTRAR DEVOLUÇÃO
+// ==================================================
 
-    if (professor === "") {
-        alert("Digite o nome do professor.");
+corpoTabelaEmprestimos.addEventListener(
+    "click",
+    async function (event) {
 
-        campoProfessor.focus();
-
-        return;
-    }
-
-    if (professor.length < 3) {
-        alert(
-            "O nome do professor deve ter pelo menos 3 caracteres."
+        const botao = event.target.closest(
+            ".btn-devolver"
         );
 
-        campoProfessor.focus();
+        if (!botao) {
+            return;
+        }
 
-        return;
-    }
+        const idEmprestimo = botao.dataset.id;
 
-
-    // Validação da data do empréstimo
-
-    if (dataEmprestimo === "") {
-        alert("Informe a data do empréstimo.");
-
-        campoDataEmprestimo.focus();
-
-        return;
-    }
-
-    if (dataEmprestimo < hoje) {
-        alert(
-            "A data do empréstimo não pode ser anterior à data atual."
+        const confirmar = confirm(
+            "Deseja confirmar a devolução desta ferramenta?"
         );
 
-        campoDataEmprestimo.focus();
+        if (!confirmar) {
+            return;
+        }
 
-        return;
+        botao.disabled = true;
+
+        try {
+            const resposta = await fetch(
+                `/api/emprestimos/${idEmprestimo}/devolver`,
+                {
+                    method: "PUT"
+                }
+            );
+
+            if (!resposta.ok) {
+                const mensagem =
+                    await obterMensagemErro(resposta);
+
+                throw new Error(mensagem);
+            }
+
+            await resposta.json();
+
+            alert(
+                "Devolução registrada com sucesso!"
+            );
+
+            await carregarEmprestimosAtivos();
+
+        } catch (erro) {
+            alert(erro.message);
+
+            botao.disabled = false;
+        }
     }
-
-
-    // Validação da data de devolução
-
-    if (dataDevolucao === "") {
-        alert("Informe a data de devolução.");
-
-        campoDataDevolucao.focus();
-
-        return;
-    }
-
-    if (dataDevolucao <= dataEmprestimo) {
-        alert(
-            "A data de devolução deve ser posterior à data do empréstimo."
-        );
-
-        campoDataDevolucao.focus();
-
-        return;
-    }
-
-
-    // Confirmação do empréstimo
-
-    alert(
-        `Empréstimo confirmado com sucesso!\n\n` +
-        `Ferramenta: ${ferramentaSelecionada.nome}\n` +
-        `Professor: ${professor}\n` +
-        `Data do empréstimo: ${formatarData(dataEmprestimo)}\n` +
-        `Data de devolução: ${formatarData(dataDevolucao)}`
-    );
-
-
-    // Limpa os campos após a confirmação
-
-    formEmprestimo.reset();
-
-    campoFerramenta.value = "";
-
-    esconderResultado();
-
-
-    // Volta a configurar as datas
-
-    campoDataEmprestimo.value = hoje;
-
-    campoDataEmprestimo.min = hoje;
-
-    campoDataDevolucao.min =
-        adicionarUmDia(hoje);
-});
+);
 
