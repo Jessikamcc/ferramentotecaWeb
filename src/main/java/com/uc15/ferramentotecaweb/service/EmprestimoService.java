@@ -47,6 +47,18 @@ public class EmprestimoService {
                     "Informe o nome do professor."
             );
         }
+        
+        long quantidadeAtivos =
+            emprestimoRepository
+                    .countByProfessorIgnoreCaseAndDevolvidoFalse(
+                            emprestimo.getProfessor().trim()
+                    );
+
+    if (quantidadeAtivos >= 3) {
+        throw new IllegalStateException(
+                "Este professor já atingiu o limite de 3 empréstimos ativos."
+        );
+    }
 
         if (emprestimo.getDataEmprestimo() == null) {
             throw new IllegalArgumentException(

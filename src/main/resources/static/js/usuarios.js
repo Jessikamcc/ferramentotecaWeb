@@ -48,10 +48,20 @@ function normalizarTexto(texto) {
 }
 
 function limparMensagensErro() {
+
     erroNome.textContent = "";
     erroSenha.textContent = "";
     erroConfirmarSenha.textContent = "";
     erroTipoUsuario.textContent = "";
+
+    erroNome.classList.remove("visivel");
+    erroSenha.classList.remove("visivel");
+    erroConfirmarSenha.classList.remove("visivel");
+    erroTipoUsuario.classList.remove("visivel");
+
+    document.querySelectorAll(".grupo-campo").forEach(function (grupo) {
+        grupo.classList.remove("campo-invalido");
+    });
 }
 
 function restaurarCamposSenha() {
@@ -119,7 +129,13 @@ botoesMostrarSenha.forEach(function (botao) {
 // ==================================================
 
 function validarFormulario() {
+
+    // Limpa erros anteriores
     limparMensagensErro();
+
+    document.querySelectorAll(".grupo-campo").forEach(function (grupo) {
+        grupo.classList.remove("campo-invalido");
+    });
 
     const nomeTratado = nome.value.trim();
     const senhaDigitada = senha.value;
@@ -128,56 +144,103 @@ function validarFormulario() {
     let formularioValido = true;
     let primeiroCampoInvalido = null;
 
+
+    // ==========================================
+    // NOME
+    // ==========================================
+
     if (nomeTratado === "") {
+
         erroNome.textContent = "Informe o nome do usuário.";
+        erroNome.classList.add("visivel");
+
+        nome.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
         primeiroCampoInvalido = nome;
+
     } else if (nomeTratado.length < 3) {
+
         erroNome.textContent =
             "O nome deve possuir pelo menos 3 caracteres.";
-        formularioValido = false;
-        primeiroCampoInvalido = nome;
-    } else if (nomeTratado.length > 100) {
-        erroNome.textContent =
-            "O nome deve possuir no máximo 100 caracteres.";
+
+        erroNome.classList.add("visivel");
+
+        nome.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
         primeiroCampoInvalido = nome;
     }
+
+
+    // ==========================================
+    // SENHA
+    // ==========================================
 
     if (senhaDigitada.trim() === "") {
+
         erroSenha.textContent = "Informe a senha.";
+        erroSenha.classList.add("visivel");
+
+        senha.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
 
         if (!primeiroCampoInvalido) {
             primeiroCampoInvalido = senha;
         }
+
     } else if (senhaDigitada.length < 6) {
+
         erroSenha.textContent =
             "A senha deve possuir pelo menos 6 caracteres.";
-        formularioValido = false;
 
-        if (!primeiroCampoInvalido) {
-            primeiroCampoInvalido = senha;
-        }
-    } else if (senhaDigitada.length > 255) {
-        erroSenha.textContent =
-            "A senha deve possuir no máximo 255 caracteres.";
+        erroSenha.classList.add("visivel");
+
+        senha.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
 
         if (!primeiroCampoInvalido) {
             primeiroCampoInvalido = senha;
         }
     }
+
+
+    // ==========================================
+    // CONFIRMAR SENHA
+    // ==========================================
 
     if (confirmacaoDigitada === "") {
-        erroConfirmarSenha.textContent = "Confirme a senha.";
+
+        erroConfirmarSenha.textContent =
+            "Confirme a senha.";
+
+        erroConfirmarSenha.classList.add("visivel");
+
+        confirmarSenha.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
 
         if (!primeiroCampoInvalido) {
             primeiroCampoInvalido = confirmarSenha;
         }
+
     } else if (confirmacaoDigitada !== senhaDigitada) {
-        erroConfirmarSenha.textContent = "As senhas não coincidem.";
+
+        erroConfirmarSenha.textContent =
+            "As senhas devem ser iguais.";
+
+        erroConfirmarSenha.classList.add("visivel");
+
+        confirmarSenha.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
 
         if (!primeiroCampoInvalido) {
@@ -185,8 +248,21 @@ function validarFormulario() {
         }
     }
 
+
+    // ==========================================
+    // TIPO DE USUÁRIO
+    // ==========================================
+
     if (tipoUsuario.value === "") {
-        erroTipoUsuario.textContent = "Selecione o tipo de usuário.";
+
+        erroTipoUsuario.textContent =
+            "Selecione o tipo de usuário.";
+
+        erroTipoUsuario.classList.add("visivel");
+
+        tipoUsuario.closest(".grupo-campo")
+            .classList.add("campo-invalido");
+
         formularioValido = false;
 
         if (!primeiroCampoInvalido) {
@@ -194,17 +270,14 @@ function validarFormulario() {
         }
     }
 
+
+    // Leva o usuário até o primeiro campo com erro
     if (primeiroCampoInvalido) {
         primeiroCampoInvalido.focus();
     }
 
     return formularioValido;
 }
-
-[nome, senha, confirmarSenha, tipoUsuario].forEach(function (campo) {
-    campo.addEventListener("input", limparMensagensErro);
-    campo.addEventListener("change", limparMensagensErro);
-});
 
 function obterDadosFormulario() {
     return {

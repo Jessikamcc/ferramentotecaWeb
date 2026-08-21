@@ -323,14 +323,12 @@ body {
 ================================================== */
 
 .mensagem-erro {
-    display: none;
-
-    margin-top: 5px;
-
+    display: block;
+    margin-top: 6px;
     color: #dc2626;
-
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
+    min-height: 16px;
 }
 
 .mensagem-erro.visivel {

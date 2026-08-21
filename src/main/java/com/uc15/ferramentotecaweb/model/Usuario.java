@@ -24,6 +24,9 @@ public class Usuario {
 
     @Column(name = "tipo_usuario", nullable = false, length = 30)
     private String tipoUsuario;
+    
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     public Usuario() {
     }
@@ -59,4 +62,13 @@ public class Usuario {
     public void setTipoUsuario(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
     }
+    
+    public boolean isAtivo() {
+    return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+    this.ativo = ativo;
+    }
+
 }

@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
     List<Emprestimo> findByDevolvidoFalseOrderByDataDevolucaoAsc();
+    
+    long countByProfessorIgnoreCaseAndDevolvidoFalse(String professor);
 }

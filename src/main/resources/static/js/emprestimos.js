@@ -122,11 +122,12 @@ function esconderResultado() {
 
 
 async function obterMensagemErro(resposta) {
-    try {
+     try {
         const dados = await resposta.json();
 
         return dados.detail
             || dados.message
+            || dados.error
             || "Não foi possível concluir a operação.";
 
     } catch {
